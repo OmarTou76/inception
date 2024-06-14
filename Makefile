@@ -32,19 +32,35 @@ stop:
 
 remove_images:
 	@echo "[!] Deleting images ..."
-	@docker image rm -f $$(docker image ls -q)
+	@if [ -n "$$(docker image ls -aq)" ]; then \
+		docker image rm -f $$(docker image ls -q); \
+	else \
+		@echo "No images to remove."; \
+	fi
 
 remove_containers:
 	@echo "[!] Deleting containers ..."
-	@docker container rm -f $$(docker container ls -aq)
+	@if [ -n "$$(docker container ls -aq)" ]; then \
+		docker container rm -f $$(docker container ls -aq); \
+	else \
+		@echo "No containers to remove."; \
+	fi
 
 remove_volumes:
 	@echo "[!] Deleting volumes ..."
-	@docker volume rm $$(docker volume ls -q)
+	@if [ -n "$$(docker volume ls -q)" ]; then \
+		docker volume rm -f $$(docker volume ls -q); \
+	else \
+		@echo "No volumes to remove."; \
+	fi
 
 remove_networks:
 	@echo "[!] Deleting networks ..."
-	@docker network rm $$(docker network ls -q)
+	@if [ -n "$$(docker network ls --filter name=inception -q)" ]; then \
+		docker network rm -f inception; \
+	else \
+		@echo "Inception network doesn't exists"; \
+	fi
 
 fclean: remove_containers remove_images remove_volumes remove_networks
 
