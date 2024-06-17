@@ -2,16 +2,10 @@ DOCKER_PATH = ./srcs/docker-compose.yaml
 
 all: build up_detach
 
-create_wordpress:
-	mkdir -p /home/$$SUDO_USER/data/files
-
-create_mariadb:
-	mkdir -p /home/$$SUDO_USER/data/database
-
-create_both: create_wordpress create_mariadb
-
-build: create_both
+build: 
 	@echo "[*] Building images ..."
+	mkdir -p /home/$$SUDO_USER/data/database
+	mkdir -p /home/$$SUDO_USER/data/files
 	@docker-compose -f $(DOCKER_PATH) build
 
 up:
@@ -35,7 +29,7 @@ remove_images:
 	@if [ -n "$$(docker image ls -aq)" ]; then \
 		docker image rm -f $$(docker image ls -q); \
 	else \
-		@echo "No images to remove."; \
+		echo "No images to remove."; \
 	fi
 
 remove_containers:
@@ -43,7 +37,7 @@ remove_containers:
 	@if [ -n "$$(docker container ls -aq)" ]; then \
 		docker container rm -f $$(docker container ls -aq); \
 	else \
-		@echo "No containers to remove."; \
+		echo "No containers to remove."; \
 	fi
 
 remove_volumes:
@@ -51,7 +45,7 @@ remove_volumes:
 	@if [ -n "$$(docker volume ls -q)" ]; then \
 		docker volume rm -f $$(docker volume ls -q); \
 	else \
-		@echo "No volumes to remove."; \
+		echo "No volumes to remove."; \
 	fi
 
 remove_networks:
@@ -59,11 +53,11 @@ remove_networks:
 	@if [ -n "$$(docker network ls --filter name=inception -q)" ]; then \
 		docker network rm -f inception; \
 	else \
-		@echo "Inception network doesn't exists"; \
+		echo "Inception network doesn't exists"; \
 	fi
 
 fclean: remove_containers remove_images remove_volumes remove_networks
 
 re: fclean build up_detach
 
-.PHONY: create_wordpress create_mariadb create_both build up up_detach down stop remove_images remove_containers remove_volumes remove_networks fclean re
+.PHONY:  build up up_detach down stop remove_images remove_containers remove_volumes remove_networks fclean re

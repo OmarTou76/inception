@@ -6,7 +6,6 @@ RUN apt install -y  wget \
                     vim \
                     php-fpm \
                     php-mysql \
-					sendmail \
                     mariadb-client
 
 COPY ./tools/wordpress.sh /usr/local/bin/
